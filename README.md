@@ -2,8 +2,8 @@
 
 ## Usage
 
-```
-$ gcloud functions deploy PostTOTP --runtime go113 --env-vars-file .env.yaml --trigger-topic post_totp
+```console
+$ gcloud functions deploy GenerateTOTP --runtime go113 --env-vars-file .env.yaml --trigger-http
 ```
 
 ## License
