@@ -4,13 +4,13 @@
 
 ```console
 $ gcloud functions deploy GenerateTOTP \
-  --gen2 \
-  --trigger-http \
-  --allow-unauthenticated \
-  --runtime go121 \
-  --env-vars-file .env.yaml \
-  --region <region> \
-  --project <project-id>
+    --gen2 \
+    --trigger-http \
+    --allow-unauthenticated \
+    --runtime go121 \
+    --env-vars-file .env.yaml \
+    --region <region> \
+    --project <project-id>
 ```
 
 ## License
