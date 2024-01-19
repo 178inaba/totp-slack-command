@@ -17,7 +17,6 @@ import (
 	"cloud.google.com/go/secretmanager/apiv1/secretmanagerpb"
 	"github.com/hgfischer/go-otp"
 	"github.com/slack-go/slack"
-	"golang.org/x/xerrors"
 )
 
 // GenerateTOTP handle generate TOTP slack command HTTP request.
@@ -152,7 +151,7 @@ type secretRepository struct {
 func newSecretRepository(ctx context.Context, projectID string) (*secretRepository, error) {
 	c, err := secretmanager.NewClient(ctx)
 	if err != nil {
-		return nil, xerrors.Errorf("new secret manager client: %w", err)
+		return nil, fmt.Errorf("new secret manager client: %w", err)
 	}
 
 	return &secretRepository{client: c, projectID: projectID}, nil
@@ -165,7 +164,7 @@ func (r *secretRepository) get(ctx context.Context, secretName string) (string, 
 
 	resp, err := r.client.AccessSecretVersion(ctx, req)
 	if err != nil {
-		return "", xerrors.Errorf("get secret: %w", err)
+		return "", fmt.Errorf("get secret: %w", err)
 	}
 
 	return string(resp.Payload.Data), nil

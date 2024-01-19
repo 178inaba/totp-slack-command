@@ -8,7 +8,6 @@ require (
 	cloud.google.com/go/secretmanager v1.11.4
 	github.com/hgfischer/go-otp v1.0.0
 	github.com/slack-go/slack v0.12.3
-	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028
 )
 
 require (
@@ -28,6 +27,7 @@ require (
 	golang.org/x/sync v0.4.0 // indirect
 	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
+	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
 	google.golang.org/api v0.149.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20231016165738-49dd2c1f3d0b // indirect
