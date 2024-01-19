@@ -27,8 +27,8 @@ func GenerateTOTP(w http.ResponseWriter, r *http.Request) {
 	projectID, err := metadata.NewClient(http.DefaultClient).ProjectID()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, "Get project ID error")
-		log.Printf("Get project ID: %s.", err)
+		fmt.Fprint(w, "Get project id error")
+		log.Printf("Get project id: %s.", err)
 		return
 	}
 
@@ -45,7 +45,7 @@ func GenerateTOTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprint(w, "Initialize client error")
-		log.Fatalf("New Datastore client: %s.", err)
+		log.Fatalf("New datastore client: %s.", err)
 		return
 	}
 	defer datastoreClient.Close()
@@ -55,7 +55,7 @@ func GenerateTOTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, "Generate error")
-		log.Fatalf("Generate TOTP token: %s.", err)
+		log.Fatalf("Generate totp token: %s.", err)
 		return
 	}
 
@@ -86,7 +86,7 @@ func (c *totpUseCase) generateTOTP(ctx context.Context, header http.Header, body
 		return "", fmt.Errorf("read body: %w", err)
 	}
 
-	signingSecret, err := c.secretRepository.get(ctx, os.Getenv("SLACK_SIGNING_SECRET_SECRET_ID"))
+	signingSecret, err := c.secretRepository.get(ctx, os.Getenv("SLACK_SIGNING_SECRET_SECRET_NAME"))
 	if err != nil {
 		return "", fmt.Errorf("get signing secret: %w", err)
 	}
@@ -125,10 +125,10 @@ func (c *totpUseCase) generateTOTP(ctx context.Context, header http.Header, body
 		UpdatedAt:   time.Now(),
 	}
 	if _, err := c.datastoreClient.Put(ctx, k, &l); err != nil {
-		return "", fmt.Errorf("put TOTP generate log to Datastore: %w", err)
+		return "", fmt.Errorf("put totp generate log to datastore: %w", err)
 	}
 
-	secret, err := c.secretRepository.get(ctx, os.Getenv("TOTP_SECRET_SECRET_ID"))
+	secret, err := c.secretRepository.get(ctx, os.Getenv("TOTP_SECRET_SECRET_NAME"))
 	if err != nil {
 		return "", fmt.Errorf("get secret: %w", err)
 	}
@@ -158,11 +158,9 @@ func newSecretRepository(ctx context.Context, projectID string) (*secretReposito
 }
 
 func (r *secretRepository) get(ctx context.Context, secretName string) (string, error) {
-	req := &secretmanagerpb.AccessSecretVersionRequest{
+	resp, err := r.client.AccessSecretVersion(ctx, &secretmanagerpb.AccessSecretVersionRequest{
 		Name: fmt.Sprintf("projects/%s/secrets/%s/versions/latest", r.projectID, secretName),
-	}
-
-	resp, err := r.client.AccessSecretVersion(ctx, req)
+	})
 	if err != nil {
 		return "", fmt.Errorf("get secret: %w", err)
 	}
