@@ -7,6 +7,7 @@ require (
 	cloud.google.com/go/datastore v1.15.0
 	cloud.google.com/go/secretmanager v1.11.4
 	github.com/hgfischer/go-otp v1.0.0
+	github.com/slack-go/slack v0.12.3
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028
 )
 
@@ -19,6 +20,7 @@ require (
 	github.com/google/s2a-go v0.1.7 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
+	github.com/gorilla/websocket v1.4.2 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/crypto v0.14.0 // indirect
 	golang.org/x/net v0.17.0 // indirect

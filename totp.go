@@ -16,6 +16,7 @@ import (
 	secretmanager "cloud.google.com/go/secretmanager/apiv1"
 	"cloud.google.com/go/secretmanager/apiv1/secretmanagerpb"
 	"github.com/hgfischer/go-otp"
+	"github.com/slack-go/slack"
 	"golang.org/x/xerrors"
 )
 
@@ -51,7 +52,7 @@ func GenerateTOTP(w http.ResponseWriter, r *http.Request) {
 	defer datastoreClient.Close()
 
 	tuc := newTOTPUseCase(datastoreClient, secretRepository)
-	totpToken, err := tuc.generateTOTP(ctx, r.Body)
+	totpToken, err := tuc.generateTOTP(ctx, r.Header, r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, "Generate error")
@@ -79,11 +80,29 @@ func newTOTPUseCase(datastoreClient *datastore.Client, secretRepository *secretR
 	return &totpUseCase{datastoreClient: datastoreClient, secretRepository: secretRepository}
 }
 
-func (c *totpUseCase) generateTOTP(ctx context.Context, body io.Reader) (string, error) {
+func (c *totpUseCase) generateTOTP(ctx context.Context, header http.Header, body io.Reader) (string, error) {
 	// Parse body.
 	bodyBytes, err := io.ReadAll(body)
 	if err != nil {
 		return "", fmt.Errorf("read body: %w", err)
+	}
+
+	signingSecret, err := c.secretRepository.get(ctx, os.Getenv("SLACK_SIGNING_SECRET_SECRET_ID"))
+	if err != nil {
+		return "", fmt.Errorf("get signing secret: %w", err)
+	}
+
+	sv, err := slack.NewSecretsVerifier(header, signingSecret)
+	if err != nil {
+		return "", fmt.Errorf("new secret verifier: %w", err)
+	}
+
+	if _, err := sv.Write(bodyBytes); err != nil {
+		return "", fmt.Errorf("write body: %w", err)
+	}
+
+	if err := sv.Ensure(); err != nil {
+		return "", fmt.Errorf("ensure secret: %w", err)
 	}
 
 	bodyStr := string(bodyBytes)
