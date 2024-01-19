@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -82,7 +81,7 @@ func newTOTPUseCase(datastoreClient *datastore.Client, secretRepository *secretR
 
 func (c *totpUseCase) generateTOTP(ctx context.Context, body io.Reader) (string, error) {
 	// Parse body.
-	bodyBytes, err := ioutil.ReadAll(body)
+	bodyBytes, err := io.ReadAll(body)
 	if err != nil {
 		return "", fmt.Errorf("read body: %w", err)
 	}
