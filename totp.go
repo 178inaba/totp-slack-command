@@ -19,43 +19,50 @@ import (
 	"github.com/slack-go/slack"
 )
 
-// GenerateTOTP handle generate TOTP slack command HTTP request.
-func GenerateTOTP(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+var tuc *totpUseCase
 
-	// Prepare client and repository.
+// Initialize datastore client and secrets.
+func init() {
+	ctx := context.Background()
+
 	projectID, err := metadata.NewClient(http.DefaultClient).ProjectID()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, "Get project id error")
-		log.Printf("Get project id: %s.", err)
-		return
+		panic(err)
+	}
+
+	dc, err := datastore.NewClient(ctx, projectID)
+	if err != nil {
+		panic(err)
 	}
 
 	secretRepository, err := newSecretRepository(ctx, projectID)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, "Initialize repository error")
-		log.Printf("New secret repository: %s.", err)
-		return
+		panic(err)
 	}
-	defer secretRepository.close()
 
-	datastoreClient, err := datastore.NewClient(ctx, projectID)
+	ss, err := secretRepository.get(ctx, os.Getenv("SLACK_SIGNING_SECRET_SECRET_ID"))
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, "Initialize client error")
-		log.Fatalf("New datastore client: %s.", err)
-		return
+		panic(err)
 	}
-	defer datastoreClient.Close()
+	ts, err := secretRepository.get(ctx, os.Getenv("TOTP_SECRET_SECRET_ID"))
+	if err != nil {
+		panic(err)
+	}
 
-	tuc := newTOTPUseCase(datastoreClient, secretRepository)
-	totpToken, err := tuc.generateTOTP(ctx, r.Header, r.Body)
+	tuc = &totpUseCase{
+		datastoreClient: dc,
+		signingSecret:   ss,
+		totpSecret:      ts,
+	}
+}
+
+// GenerateTOTP handle generate TOTP slack command HTTP request.
+func GenerateTOTP(w http.ResponseWriter, r *http.Request) {
+	totpToken, err := tuc.generateTOTP(r.Context(), r.Header, r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, "Generate error")
-		log.Fatalf("Generate totp token: %s.", err)
+		log.Printf("Generate totp token: %s.", err)
 		return
 	}
 
@@ -71,27 +78,21 @@ type totpGenerateLog struct {
 }
 
 type totpUseCase struct {
-	datastoreClient  *datastore.Client
-	secretRepository *secretRepository
-}
+	datastoreClient *datastore.Client
 
-func newTOTPUseCase(datastoreClient *datastore.Client, secretRepository *secretRepository) *totpUseCase {
-	return &totpUseCase{datastoreClient: datastoreClient, secretRepository: secretRepository}
+	signingSecret string
+	totpSecret    string
 }
 
 func (c *totpUseCase) generateTOTP(ctx context.Context, header http.Header, body io.Reader) (string, error) {
-	// Parse body.
+	// Read body.
 	bodyBytes, err := io.ReadAll(body)
 	if err != nil {
 		return "", fmt.Errorf("read body: %w", err)
 	}
 
-	signingSecret, err := c.secretRepository.get(ctx, os.Getenv("SLACK_SIGNING_SECRET_SECRET_ID"))
-	if err != nil {
-		return "", fmt.Errorf("get signing secret: %w", err)
-	}
-
-	sv, err := slack.NewSecretsVerifier(header, signingSecret)
+	// Validating a request.
+	sv, err := slack.NewSecretsVerifier(header, c.signingSecret)
 	if err != nil {
 		return "", fmt.Errorf("new secret verifier: %w", err)
 	}
@@ -102,18 +103,11 @@ func (c *totpUseCase) generateTOTP(ctx context.Context, header http.Header, body
 		return "", fmt.Errorf("ensure secret: %w", err)
 	}
 
-	bodyStr := string(bodyBytes)
-	v, err := url.ParseQuery(bodyStr)
+	// Save generate log.
+	v, err := url.ParseQuery(string(bodyBytes))
 	if err != nil {
 		return "", fmt.Errorf("parse body: %w", err)
 	}
-
-	// Validation body.
-	if v.Get("team_domain") == "" || v.Get("channel_name") == "" || v.Get("user_name") == "" {
-		return "", fmt.Errorf("invalid request body: %s", bodyStr)
-	}
-
-	// Save generate log.
 	k := datastore.IncompleteKey("totp_generate_log", nil)
 	l := totpGenerateLog{
 		TeamDomain:  v.Get("team_domain"),
@@ -126,16 +120,11 @@ func (c *totpUseCase) generateTOTP(ctx context.Context, header http.Header, body
 		return "", fmt.Errorf("put totp generate log to datastore: %w", err)
 	}
 
-	secret, err := c.secretRepository.get(ctx, os.Getenv("TOTP_SECRET_SECRET_ID"))
-	if err != nil {
-		return "", fmt.Errorf("get secret: %w", err)
-	}
-
-	secretBytes, err := hex.DecodeString(secret)
+	// Generate totp.
+	secretBytes, err := hex.DecodeString(c.totpSecret)
 	if err != nil {
 		return "", fmt.Errorf("decode secret: %w", err)
 	}
-
 	totp := otp.TOTP{Secret: string(secretBytes), Time: time.Now(), Period: 60}
 	return totp.Get(), nil
 }
@@ -164,8 +153,4 @@ func (r *secretRepository) get(ctx context.Context, secretID string) (string, er
 	}
 
 	return string(resp.Payload.Data), nil
-}
-
-func (r *secretRepository) close() {
-	r.client.Close()
 }
