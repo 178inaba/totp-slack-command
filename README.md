@@ -1,5 +1,7 @@
 # TOTP Slack Command
 
+[![Test](https://github.com/178inaba/totp-slack-command/actions/workflows/test.yml/badge.svg)](https://github.com/178inaba/totp-slack-command/actions/workflows/test.yml)
+
 ## Usage
 
 ```console
