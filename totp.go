@@ -25,7 +25,7 @@ var tuc *totpUseCase
 func init() {
 	ctx := context.Background()
 
-	projectID, err := metadata.NewClient(http.DefaultClient).ProjectID()
+	projectID, err := metadata.ProjectIDWithContext(ctx)
 	if err != nil {
 		panic(err)
 	}
