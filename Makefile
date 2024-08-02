@@ -1,6 +1,6 @@
-.PHONY: all fmt fmt-diff ci-lint ci-lint-fix vet test install-tools go-install-tools
+.PHONY: all fmt fmt-diff lint lint-fix vet test install-tools go-install-tools
 
-all: ci-lint-fix fmt ci-lint vet test
+all: lint-fix fmt lint vet test
 
 fmt:
 	goimports -w .
@@ -8,10 +8,10 @@ fmt:
 fmt-diff:
 	test -z $$(goimports -l .) || (goimports -d . && exit 1)
 
-ci-lint:
+lint:
 	.bin/golangci-lint run
 
-ci-lint-fix:
+lint-fix:
 	.bin/golangci-lint run --fix
 
 vet:
