@@ -3,7 +3,7 @@ module github.com/178inaba/totp-slack-command
 go 1.21.7
 
 require (
-	cloud.google.com/go/compute/metadata v0.5.0
+	cloud.google.com/go/compute/metadata v0.5.2
 	cloud.google.com/go/datastore v1.19.0
 	cloud.google.com/go/secretmanager v1.14.0
 	github.com/hgfischer/go-otp v1.0.0
@@ -33,7 +33,7 @@ require (
 	golang.org/x/net v0.28.0 // indirect
 	golang.org/x/oauth2 v0.22.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
-	golang.org/x/sys v0.24.0 // indirect
+	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/text v0.17.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
 	google.golang.org/api v0.193.0 // indirect
