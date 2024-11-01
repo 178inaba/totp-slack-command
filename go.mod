@@ -4,7 +4,7 @@ go 1.21.7
 
 require (
 	cloud.google.com/go/compute/metadata v0.5.2
-	cloud.google.com/go/datastore v1.19.0
+	cloud.google.com/go/datastore v1.20.0
 	cloud.google.com/go/secretmanager v1.14.2
 	github.com/hgfischer/go-otp v1.0.0
 	github.com/slack-go/slack v0.14.0
