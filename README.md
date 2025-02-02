@@ -9,7 +9,7 @@ $ gcloud functions deploy GenerateTOTP \
     --gen2 \
     --trigger-http \
     --allow-unauthenticated \
-    --runtime go122 \
+    --runtime go123 \
     --env-vars-file .env.yaml \
     --region <region> \
     --project <project-id>
