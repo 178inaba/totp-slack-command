@@ -6,13 +6,9 @@ updates:
       interval: "monthly"
     assignees:
       - "178inaba"
-    reviewers:
-      - "178inaba"
   - package-ecosystem: "gomod"
     directory: "/"
     schedule:
       interval: "monthly"
     assignees:
-      - "178inaba"
-    reviewers:
       - "178inaba"
