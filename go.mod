@@ -7,7 +7,7 @@ require (
 	cloud.google.com/go/datastore v1.20.0
 	cloud.google.com/go/secretmanager v1.14.7
 	github.com/hgfischer/go-otp v1.0.0
-	github.com/slack-go/slack v0.16.0
+	github.com/slack-go/slack v0.17.0
 )
 
 require (
@@ -21,7 +21,7 @@ require (
 	github.com/google/s2a-go v0.1.9 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.6 // indirect
 	github.com/googleapis/gax-go/v2 v2.14.1 // indirect
-	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/gorilla/websocket v1.5.3 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.60.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.60.0 // indirect
