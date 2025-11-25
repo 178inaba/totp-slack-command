@@ -11,6 +11,7 @@ $ gcloud functions deploy GenerateTOTP \
     --allow-unauthenticated \
     --runtime go125 \
     --env-vars-file .env.yaml \
+    --service-account <service-account> \
     --region <region> \
     --project <project-id>
 ```
