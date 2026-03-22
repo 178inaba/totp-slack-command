@@ -1,13 +1,13 @@
 module github.com/178inaba/totp-slack-command
 
-go 1.24.0
+go 1.25
 
 require (
 	cloud.google.com/go/compute/metadata v0.9.0
 	cloud.google.com/go/datastore v1.22.0
 	cloud.google.com/go/secretmanager v1.16.0
 	github.com/hgfischer/go-otp v1.0.0
-	github.com/slack-go/slack v0.17.3
+	github.com/slack-go/slack v0.20.0
 )
 
 require (
