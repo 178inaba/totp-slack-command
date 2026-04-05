@@ -1,14 +1,20 @@
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: docker-compose
+    directory: /
     schedule:
-      interval: "monthly"
-    assignees:
-      - "178inaba"
-  - package-ecosystem: "gomod"
-    directory: "/"
+      interval: monthly
+    cooldown:
+      default-days: 14
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
-      interval: "monthly"
-    assignees:
-      - "178inaba"
+      interval: monthly
+    cooldown:
+      default-days: 14
+  - package-ecosystem: gomod
+    directory: /
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 14
