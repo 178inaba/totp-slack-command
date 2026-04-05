@@ -1,11 +1,8 @@
-.PHONY: all lint lint-fix vet test install-tools go-install-tools
+.PHONY: all lint vet test install-tools go-install-tools
 
-all: lint-fix lint vet test
+all: lint vet test
 
 lint:
-	.bin/golangci-lint run
-
-lint-fix:
 	.bin/golangci-lint run --fix
 
 vet:
