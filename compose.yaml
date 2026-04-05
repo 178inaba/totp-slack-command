@@ -1,0 +1,15 @@
+name: totp-slack-command
+
+services:
+  lint:
+    image: "golangci/golangci-lint:v2.11.4"
+    entrypoint: ["golangci-lint", "run", "--fix"]
+    working_dir: /app
+    volumes:
+      - ".:/app"
+      - "gomod_cache:/go/pkg/mod"
+      - "lint_cache:/root/.cache"
+
+volumes:
+  gomod_cache:
+  lint_cache:

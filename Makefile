@@ -1,15 +1,15 @@
-.PHONY: all lint vet test
+.PHONY: all lint fix vet test
 
-all: lint vet test
+all: lint fix vet test
 
 lint:
-	.bin/golangci-lint run --fix
-
-vet:
-	go vet ./...
+	docker compose run --rm lint
 
 fix:
 	go fix ./...
+
+vet:
+	go vet ./...
 
 test:
 	go test -race -count 1 -cover ./...
