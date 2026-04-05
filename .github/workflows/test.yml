@@ -7,24 +7,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  gofmt-vet:
-    name: Gofmt and Vet
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-      - name: Setup Go
-        uses: actions/setup-go@v6
-        with:
-          go-version-file: go.mod
-      - name: Install tools
-        run: make -s go-install-tools
-      - name: Run Gofmt diff
-        run: make -s fmt-diff
-      - name: Run Vet
-        run: make -s vet
-
-  golangci-lint:
+  lint:
     name: GolangCI Lint
     runs-on: ubuntu-latest
     steps:
@@ -36,11 +19,15 @@ jobs:
           go-version-file: go.mod
       - name: Get golangci-lint version
         id: version
-        run: echo "version=$(cat .golangci-lint-version)" >> $GITHUB_OUTPUT
+        run: |
+          img_ref=$(cat compose.yaml | yq '.services.lint.image')
+          echo "version=${img_ref#*:}" >> "${GITHUB_OUTPUT}"
       - name: GolangCI Lint
         uses: golangci/golangci-lint-action@v9
         with:
           version: ${{ steps.version.outputs.version }}
+      - name: Run Vet
+        run: make -s vet
 
   test:
     name: Test
