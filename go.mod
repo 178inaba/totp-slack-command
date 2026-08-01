@@ -7,7 +7,7 @@ require (
 	cloud.google.com/go/datastore v1.25.0
 	cloud.google.com/go/secretmanager v1.20.0
 	github.com/hgfischer/go-otp v1.0.0
-	github.com/slack-go/slack v0.26.0
+	github.com/slack-go/slack v0.27.0
 )
 
 require (
