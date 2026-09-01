@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	cloud.google.com/go/compute/metadata v0.9.0
 	cloud.google.com/go/datastore v1.25.0
-	cloud.google.com/go/secretmanager v1.20.0
+	cloud.google.com/go/secretmanager v1.21.0
 	github.com/hgfischer/go-otp v1.0.0
 	github.com/slack-go/slack v0.27.0
 )
@@ -14,7 +14,7 @@ require (
 	cloud.google.com/go v0.123.0 // indirect
 	cloud.google.com/go/auth v0.20.0 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
-	cloud.google.com/go/iam v1.7.0 // indirect
+	cloud.google.com/go/iam v1.11.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
